@@ -1,5 +1,6 @@
 import { type Score } from "./types/Score";
 import { type ScoreResponse } from "./types/ScoreResponse";
+import * as Config from "./config.json" with { type: "json" };
 
 export async function fetchScores(seed: string): Promise<Score[]> {
   const scores: ScoreResponse[] = [];
@@ -9,17 +10,22 @@ export async function fetchScores(seed: string): Promise<Score[]> {
     // GET request for scores
     // Defaults to top 25 scores, with pagination token if there are more
     const response = await fetch(
-      "https://geoguessr.com/api/v3/results/highscores" +
+      `https://geoguessr.com/api/v3/results/highscores/${seed}?` +
         new URLSearchParams({
           friends: "false",
+          limit: "25",
           minRounds: "5",
           paginationToken: nextPage,
         }),
-      { headers: new Headers({ _ncfa: "" }) }
+      {
+        headers: new Headers({
+          "Cookie": `_ncfa=${Config.ncfaCookie}`
+        }),
+      }
     );
 
     if (response.status !== 200) {
-      console.error("Failed to fetch scores for seed", seed);
+      throw new Error(`Failed to fetch scores for seed ${seed}`);
     }
 
     // Parse response JSON
@@ -27,7 +33,9 @@ export async function fetchScores(seed: string): Promise<Score[]> {
       await response.json();
 
     // Add scores to array
-    scores.push(...json.items);
+    if (json.items !== null) {
+      scores.push(...json.items);
+    }
 
     // Update the token for the next page
     nextPage = json.paginationToken;
@@ -41,6 +49,7 @@ export async function fetchScores(seed: string): Promise<Score[]> {
     let guesses = data.game.player.guesses;
     return {
       player: data.playerName,
+      playerId: data.userId,
       rounds: guesses.map((guess) => {
         return {
           score: guess.roundScoreInPoints,

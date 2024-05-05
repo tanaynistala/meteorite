@@ -1,5 +1,6 @@
 export type ScoreResponse = {
   playerName: string;
+  userId: string;
   game: {
     player: {
       guesses: {
