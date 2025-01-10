@@ -8,12 +8,11 @@ export async function fetchScores(seed: string): Promise<Score[]> {
 
   while (true) {
     // GET request for scores
-    // Defaults to top 25 scores, with pagination token if there are more
+    // Defaults to top 1000 scores, with pagination token if there are more
     const response = await fetch(
       `https://geoguessr.com/api/v3/results/highscores/${seed}?` +
         new URLSearchParams({
-          friends: "false",
-          limit: "25",
+          limit: "1000",
           minRounds: "5",
           paginationToken: nextPage,
         }),
@@ -29,8 +28,7 @@ export async function fetchScores(seed: string): Promise<Score[]> {
     }
 
     // Parse response JSON
-    const json: { items: ScoreResponse[]; paginationToken: string } =
-      await response.json();
+    const json: { items: ScoreResponse[]; paginationToken: string } = await response.json();
 
     // Add scores to array
     if (json.items !== null) {
@@ -42,6 +40,8 @@ export async function fetchScores(seed: string): Promise<Score[]> {
 
     // Break if no more scores are left
     if (nextPage === null) break;
+
+    await new Promise(f => setTimeout(f, 100));
   }
 
   // Reformat scores and return
