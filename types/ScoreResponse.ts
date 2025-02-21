@@ -1,8 +1,8 @@
 export type ScoreResponse = {
-  playerName: string;
-  userId: string;
   game: {
     player: {
+      id: string;
+      nick: string;
       guesses: {
         roundScoreInPoints: number;
         distanceInMeters: number;
