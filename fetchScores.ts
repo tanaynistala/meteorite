@@ -13,7 +13,7 @@ export async function fetchScores(seed: string): Promise<Score[]> {
       `https://geoguessr.com/api/v3/results/highscores/${seed}?` +
         new URLSearchParams({
           limit: "1000",
-          minRounds: "5",
+          minRounds: "1",
           paginationToken: nextPage,
         }),
       {

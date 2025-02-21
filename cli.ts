@@ -14,5 +14,10 @@ const { values, positionals } = parseArgs({
 
 if (values.seed) {
   const scores = await fetchScores(values.seed);
-  console.log(scores);
+  scores.forEach((score) => {
+    console.log(score.player)
+    score.rounds.forEach((round, index) => {
+      console.log(index+1, round.score, "points", round.distance, "meters")
+    })
+  })
 }
