@@ -18,7 +18,7 @@ export async function fetchScores(seed: string): Promise<Score[]> {
         }),
       {
         headers: new Headers({
-          "Cookie": `_ncfa=${Config.ncfaCookie}`
+          "Cookie": `_ncfa=${Config.ncfaCookie}; domain=.geoguessr.com; path=/`
         }),
       }
     );
@@ -48,8 +48,8 @@ export async function fetchScores(seed: string): Promise<Score[]> {
   return scores.map((data: ScoreResponse) => {
     let guesses = data.game.player.guesses;
     return {
-      player: data.playerName,
-      playerId: data.userId,
+      player: data.game.player.nick,
+      playerId: data.game.player.id,
       rounds: guesses.map((guess) => {
         return {
           score: guess.roundScoreInPoints,
